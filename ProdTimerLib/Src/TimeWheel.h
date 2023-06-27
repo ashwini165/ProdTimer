@@ -9,7 +9,7 @@
 
 class TimeWheel {
 public:
-    TimeWheel(uint32_t scales, uint32_t scale_unit_ms, const std::string& name = "");
+    TimeWheel(uint32_t scales, uint32_t scaleUnitMS, const std::string& name = "");
 
     uint32_t scaleUnitMS() const {
         return m_scaleUnitMS;
@@ -23,8 +23,8 @@ public:
         return m_currentIndex;
     }
 
-    void setSmallerLevelTW(TimeWheel* less_level_tw) {
-        m_lessLevelTW = less_level_tw;
+    void setSmallerLevelTW(TimeWheel* lessLevelTW) {
+        m_lessLevelTW = lessLevelTW;
     }
 
     void setGreaterLevelTW(TimeWheel* greaterLevelTW) {
@@ -43,7 +43,7 @@ private:
     std::string m_name;
     uint32_t m_currentIndex;
 
-    // A time wheel can be devided into multiple scales. A scals has N ms.
+    // A time wheel can be devided into multiple scales. A scale has N ms.
     uint32_t m_scales;
     uint32_t m_scaleUnitMS;
 

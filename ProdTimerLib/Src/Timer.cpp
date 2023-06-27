@@ -13,6 +13,10 @@ uint32_t Timer::SetTimer(int32_t delayInMilliSeconds, const CallBack& task, uint
     return m_timerImpl->SetTimer(delayInMilliSeconds, task, repeatCount);
 }
 
+uint32_t Timer::SetDelayedTask(int64_t expiryTimeSinceEpoch, const CallBack& task) {
+    return m_timerImpl->SetTimer(expiryTimeSinceEpoch, task);
+}
+
 void Timer::CancelTimer(uint32_t timerId) {
     m_timerImpl->CancelTimer(timerId);
 }

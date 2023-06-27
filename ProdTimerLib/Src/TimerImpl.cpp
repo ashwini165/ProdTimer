@@ -17,6 +17,7 @@ bool TimerImpl::Start() {
     }
 
     m_timerThread = std::thread(std::bind(&TimerImpl::Run, this));
+    m_workerThread = std::thread(std::bind(&TimerImpl::OnExpiry, this));
 
     return true;
 }
@@ -24,30 +25,61 @@ bool TimerImpl::Start() {
 void TimerImpl::Run() {
     while (true) {
         std::this_thread::sleep_for(std::chrono::milliseconds(m_timerStepInMilliSecond));
-
-        std::lock_guard<std::mutex> lock(m_mutex);
-        if (m_stop) {
-            break;
-        }
-
-        TimeWheelPtr leastTimeWheel = GetLowestTimeWheel();
-        leastTimeWheel->Increase();
-        std::list<TimerInfoPtr> slot = std::move(leastTimeWheel->GetAndClearCurrentSlot());
-        for (const TimerInfoPtr& timer : slot) {
-            auto it = m_cancelTimerIds.find(timer->Id());
-            if (it != m_cancelTimerIds.end()) {
-                m_cancelTimerIds.erase(it);
-                continue;
+        std::list<CallBack> expiredTimers;
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            if (m_stop) {
+                break;
             }
 
-            timer->Run();
-            uint32_t repeatCount = timer->GetRepeatCount();
-            if (repeatCount == -1 || repeatCount > 0) {
-                timer->SetNextExpiry();
-                GetHighestTimeWheel()->AddTimer(timer);
+            TimeWheelPtr lowestTimeWheel = GetLowestTimeWheel();
+            lowestTimeWheel->Increase();
+            std::list<TimerInfoPtr> slot = std::move(lowestTimeWheel->GetAndClearCurrentSlot());
+            for (const TimerInfoPtr& timer : slot) {
+                auto it = m_cancelTimerIds.find(timer->Id());
+                if (it != m_cancelTimerIds.end()) {
+                    m_cancelTimerIds.erase(it);
+                    continue;
+                }
+                expiredTimers.push_back(timer->GetCallBack());
+                timer->DecreaseRepeatCount();
+                uint32_t repeatCount = timer->GetRepeatCount();
+                if (repeatCount == -1 || repeatCount > 0) {
+                    timer->SetNextExpiry();
+                    GetHighestTimeWheel()->AddTimer(timer);
+                }
+            }
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(m_taskQueueMutex);
+            for (auto& cb : expiredTimers) {
+                m_taskQueue.push(cb);
             }
         }
     }
+}
+
+void TimerImpl::OnExpiry() {
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(m_timerStepInMilliSecond));
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            if (m_stop) {
+                break;
+            }
+        }
+        {
+            std::lock_guard<std::mutex> lock(m_taskQueueMutex);
+            while (!m_taskQueue.empty()) {
+                auto cb = m_taskQueue.front();
+                m_taskQueue.pop();
+                cb();
+            }
+        }
+    }
+}
+TimerImpl::~TimerImpl() {
 }
 
 void TimerImpl::Stop() {
@@ -57,6 +89,7 @@ void TimerImpl::Stop() {
     }
 
     m_timerThread.join();
+    m_workerThread.join();
 }
 
 TimeWheelPtr TimerImpl::GetHighestTimeWheel() {
@@ -92,9 +125,13 @@ uint32_t TimerImpl::SetTimer(int32_t delayInMilliSeconds, const CallBack& task, 
     return SetTimerImpl(expiryTimeSinceEpoch, delayInMilliSeconds, task, repeatCount);
 }
 
-void TimerImpl::CancelTimer(uint32_t timer_id) {
+uint32_t TimerImpl::SetTimer(int64_t expiryTimeSinceEpoch, const CallBack& task) {
+    return SetTimerImpl(expiryTimeSinceEpoch, 0, task, 1);
+}
+
+void TimerImpl::CancelTimer(uint32_t timerID) {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_cancelTimerIds.insert(timer_id);
+    m_cancelTimerIds.insert(timerID);
 }
 
 void TimerImpl::init() {

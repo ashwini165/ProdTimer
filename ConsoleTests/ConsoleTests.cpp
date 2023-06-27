@@ -14,10 +14,13 @@ int main()
     /*testTimer.SetTimer(10000, []() {
         std::cout << "At now+10s" << std::endl;
         });*/
+    testTimer.SetDelayedTask(GetNowTimestamp() + 10000, []() {
+        std::cout << "At now+10s" << std::endl;
+        });
 
     testTimer.SetTimer(500, []() {
         std::cout << "Every 0.5s" << std::endl;
-        });
+        }, -1);
 
     std::cout << timetoStr() << std::endl;
     auto timer_id = testTimer.SetTimer(5000, []() {

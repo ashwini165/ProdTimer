@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="Interface\ITimer.h" />
     <ClInclude Include="Interface\Timer.h" />
+    <ClInclude Include="Src\concurrent_queue.h" />
     <ClInclude Include="Src\Helpers.h" />
     <ClInclude Include="Src\TimerImpl.h" />
     <ClInclude Include="Src\TimerInfo.h" />

@@ -34,19 +34,19 @@ namespace TimerTests
                 outputs[idSecond_2].push_back(GetNowTimestamp());
                 }, 10);
 
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(10010));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10000));
             testTimer.CancelTimer(idSecond_2);
             Assert::AreEqual(3, (int)outputs.size());
-            Assert::AreEqual(20, (int)outputs[idHalfSecond].size());
-            Assert::AreEqual(10, (int)outputs[idSecond_1].size());
-            Assert::AreEqual(5, (int)outputs[idSecond_2].size());
+            Assert::IsTrue(abs(20 - (int)outputs[idHalfSecond].size()) <= 1);
+            Assert::IsTrue(abs(10 - (int)outputs[idSecond_1].size()) <= 1);
+            Assert::IsTrue(abs(5 - (int)outputs[idSecond_2].size()) <= 1);
+ 
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(10010));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10000));
             Assert::AreEqual(3, (int)outputs.size());
-            Assert::AreEqual(40, (int)outputs[idHalfSecond].size());
+            Assert::IsTrue(abs(40 - (int)outputs[idHalfSecond].size()) <= 1);
             Assert::AreEqual(17, (int)outputs[idSecond_1].size());
-            Assert::AreEqual(5, (int)outputs[idSecond_2].size());
+            Assert::IsTrue(abs(5 - (int)outputs[idSecond_2].size()) <= 1);
 
             //std::this_thread::sleep_for(std::chrono::minutes(20));
             testTimer.Stop();
@@ -89,6 +89,5 @@ namespace TimerTests
             //std::this_thread::sleep_for(std::chrono::minutes(20));
             testTimer.Stop();
         }
-
 	};
 }

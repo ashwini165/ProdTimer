@@ -20,7 +20,9 @@ public:
     Timer(Timer&&) = delete;
     Timer& operator=(Timer&&) = delete;
 
+    /*set repeatCount = -1 for forever timer*/
     uint32_t SetTimer(int32_t delayInMilliSeconds, const CallBack& task, uint32_t repeatCount = -1) override;
+    uint32_t SetDelayedTask(int64_t expiryTimeSinceEpoch, const CallBack& task) override;
 
     void CancelTimer(uint32_t timerId) override;
     bool Start();

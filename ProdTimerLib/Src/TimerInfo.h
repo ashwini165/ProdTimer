@@ -9,8 +9,6 @@ class TimerInfo {
 public:
     TimerInfo(uint32_t id, int64_t expiryTimeSinceEpoch, uint32_t delayInMilliSeconds, int32_t repeatCount, const CallBack& cb);
 
-    void Run();
-
     uint32_t Id() const {
         return m_id;
     }
@@ -29,6 +27,12 @@ public:
 
     int32_t GetRepeatCount() const {
         return m_repeatCount;
+    }
+
+    void DecreaseRepeatCount();
+
+    CallBack GetCallBack() const {
+        return m_cb;
     }
 
 private:
