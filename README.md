@@ -38,8 +38,8 @@ However, for large values of T and small values of M, Approach 2  will have a be
 This design chooses Hierarchical Timing Wheels implementation.
 
 **Further improvement:**
-1. TimerID: Time is 32 bit, monotonically increasing. For long running timers, Timer ID may collide. A separate TimerID generator to generate unique IDs should be used
-2. Timer slots are allocated and deallocated on heap. As an improvement Timer slots should be acquired from a pool of timer slots. A precreted pool will also solve the uniqure TimerID,
-3. This design chooses Hierarchical Timing Wheel, Time.cpp should choose using policy class to choose appropriate implementation
-4. Worker thread is fixed. It should use a worker pool instead for improved concurrency.
-5. Sleep as Tick or Select() as Tick. Select is stable and used since many year. Sleep precision depends on platform. 
+1. TimerID: Timer ID is 32 bit, monotonically increasing number. For long running timers, Timer IDs may collide. A separate Timer ID generator to generate unique IDs should be used.
+2. Timer slots are allocated and deallocated on heap. As an improvement Timer slots should be acquired from a pool of timer slots. A pre-created pool will also solve the uniqure Timer ID.
+3. This design chooses Hierarchical Timing Wheel. Timer.cpp should choose using policy class appropriate implementation Approch 1 or Approch 2.
+4. Worker thread is fixed. We should use worker pool for improved concurrency.
+5. Sleep() as Tick or Select() as Tick. Select is stable and used since many year. Sleep precision depends on platform. 
