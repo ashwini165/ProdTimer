@@ -30,7 +30,7 @@ c_m the cost of moving timer entries to the next wheel in approach 2
 Cost of Approach 1 = (N/M)*c_i
 Cost of Approach 2 = N*(L/T)*c_m
 
-Assuming c_i =~ c_m for small values of T and large values of M, Approach 1 can be better than Scheme 7 for both START-TIMER and PER-TICK-BOOKKEEPING.
+Assuming c_i =~ c_m for small values of T and large values of M, Approach 1 can be better than Approach 2 for both START-TIMER and PER-TICK-BOOKKEEPING.
 
 However, for large values of T and small values of M, Approach 2  will have a better average cost (latency) for PER-TICK-BOOKKEEPING but a greater cost for START-TIMER
 
