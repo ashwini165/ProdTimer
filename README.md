@@ -20,16 +20,16 @@
 
 **Comparison:**
 
-N = Timers count
-M = Total number of slots available
-L = Number of levels in Hierarchical timer wheel
-T = Average timer interval
+- N = Timers count
+- M = Total number of slots available
+- L = Number of levels in Hierarchical timer wheel
+- T = Average timer interval
 
-c_i the cost of hashing and indexing one entry in approach 1
-c_m the cost of moving timer entries to the next wheel in approach 2
+- c_i the cost of hashing and indexing one entry in Approach 1
+- c_m the cost of moving timer entries to the next wheel in Approach 2
 
-Cost of Approach 1 = (N/M)*c_i
-Cost of Approach 2 = N*(L/T)*c_m
+- Cost of Approach 1 = (N/M)*c_i
+- Cost of Approach 2 = N*(L/T)*c_m
 
 Assuming c_i =~ c_m for small values of T and large values of M, Approach 1 can be better than Approach 2 for both START-TIMER and PER-TICK-BOOKKEEPING.
 
