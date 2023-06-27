@@ -41,3 +41,4 @@ Further improvement.
 2. Timer slots are allocated and deallocated on heap. As an improvement Timer slots should be acquired from a pool of timer slots. A precreted pool will also solve the uniqure TimerID,
 3. This design chooses Hierarchical Timing Wheel, Time.cpp should choose using policy class to choose appropriate implementation
 4. Worker thread is fixed. It should use a worker pool instead for improved concurrency.
+5. Sleep as Tick or Select() as Tick. Select is stable and used since many year. Sleep precision depends on platform. 
