@@ -1,9 +1,9 @@
 # ProdTimer
-Assumptions
+**Assumptions:**
 1.  Default timer granularity 50 ms.
 2.  Default max delay 24 hours.
 
-Design Alternatives:
+**Design Alternatives:**
 1) Single Hashing Wheel with Unordered Timer Lists:-
    Create a circular buffer with a fixed number of slots. We store a count of how many times around the ring each timer is in the future.
    To insert a timer that expires j time units in the future, compute a counter value _ c = j / num-buckets_ and a slot delta s = j % num-buckets.
@@ -13,12 +13,13 @@ Design Alternatives:
    This approach uses multiple timing wheels in a hierarchy.
    We want to store timers with 5 granularity, that can be set for up to 1 days in the future.
    We construct four wheels:
-   An hours wheel with 24 slots
-   A minutes wheel with 60 slots
-   A seconds wheel with 60 slots
-   A millisecond wheel with 1000/50 = 20 slots
+   - An hours wheel with 24 slots
+   - A minutes wheel with 60 slots
+   - A seconds wheel with 60 slots
+   - A millisecond wheel with 1000/50 = 20 slots
 
-Comparison:
+**Comparison:**
+
 N = Timers count
 M = Total number of slots available
 L = Number of levels in Hierarchical timer wheel
@@ -36,7 +37,7 @@ However, for large values of T and small values of M, Approach 2  will have a be
 
 This design chooses Hierarchical Timing Wheels implementation.
 
-Further improvement.
+**Further improvement:**
 1. TimerID: Time is 32 bit, monotonically increasing. For long running timers, Timer ID may collide. A separate TimerID generator to generate unique IDs should be used
 2. Timer slots are allocated and deallocated on heap. As an improvement Timer slots should be acquired from a pool of timer slots. A precreted pool will also solve the uniqure TimerID,
 3. This design chooses Hierarchical Timing Wheel, Time.cpp should choose using policy class to choose appropriate implementation
